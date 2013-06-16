@@ -139,7 +139,7 @@ CGUIViewState* CGUIViewState::GetViewState(int windowId, const CFileItemList& it
 
   if (windowId==WINDOW_PROGRAMS)
     return new CGUIViewStateWindowPrograms(items);
-  
+
   if (windowId==WINDOW_ADDON_BROWSER)
     return new CGUIViewStateAddonBrowser(items);
 
@@ -167,7 +167,7 @@ SortOrder CGUIViewState::GetDisplaySortOrder() const
   // default sort order for date, size, program count + rating is reversed
   SORT_METHOD sortMethod = GetSortMethod();
   if (sortMethod == SORT_METHOD_DATE || sortMethod == SORT_METHOD_SIZE || sortMethod == SORT_METHOD_PLAYCOUNT ||
-      sortMethod == SORT_METHOD_VIDEO_RATING || sortMethod == SORT_METHOD_PROGRAM_COUNT ||
+      sortMethod == SORT_METHOD_VIDEO_RATING || sortMethod == SORT_METHOD_VIDEO_USERRATING || sortMethod == SORT_METHOD_PROGRAM_COUNT ||
       sortMethod == SORT_METHOD_SONG_RATING || sortMethod == SORT_METHOD_BITRATE || sortMethod == SORT_METHOD_LISTENERS)
   {
     if (m_sortOrder == SortOrderAscending) return SortOrderDescending;
@@ -345,7 +345,6 @@ bool CGUIViewState::IsCurrentPlaylistDirectory(const CStdString& strDirectory)
   return (m_strPlaylistDirectory==strDir);
 }
 
-
 bool CGUIViewState::AutoPlayNextItem()
 {
   return false;
@@ -375,7 +374,7 @@ void CGUIViewState::AddAddonsSource(const CStdString &content, const CStdString 
   if (XFILE::CAddonsDirectory::GetScriptsAndPlugins(content, items))
   { // add the plugin source
     CMediaSource source;
-    source.strPath = "addons://sources/" + content + "/";    
+    source.strPath = "addons://sources/" + content + "/";
     source.strName = label;
     if (!thumb.IsEmpty() && g_TextureManager.HasTexture(thumb))
       source.m_strThumbnailImage = thumb;
@@ -499,7 +498,6 @@ void CGUIViewState::AddPlaylistOrder(const CFileItemList &items, LABEL_MASKS lab
   SetSortOrder(sortOrder);
 }
 
-
 CGUIViewStateFromItems::CGUIViewStateFromItems(const CFileItemList &items) : CGUIViewState(items)
 {
   const vector<SORT_METHOD_DETAILS> &details = items.GetSortDetails();
@@ -550,4 +548,3 @@ void CGUIViewStateLibrary::SaveViewState()
 {
   SaveViewToDb(m_items.GetPath(), g_windowManager.GetActiveWindow());
 }
-

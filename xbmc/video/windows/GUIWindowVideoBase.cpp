@@ -123,8 +123,46 @@ bool CGUIWindowVideoBase::OnAction(const CAction &action)
       return true;
     }
   }
+  else if (action.GetID() == ACTION_INCREASE_RATING || action.GetID() == ACTION_DECREASE_RATING)
+  {
+	  if ( m_viewControl.GetSelectedItem() >= 0 &&
+		  m_viewControl.GetSelectedItem() < m_vecItems->Size() &&
+		  OnRateAction(m_vecItems->Get(m_viewControl.GetSelectedItem()), action.GetID()) )
+	  {
+		  CUtil::DeleteVideoDatabaseDirectoryCache();
+		  Update(m_vecItems->GetPath());
+	  }
+  }
 
   return CGUIMediaWindow::OnAction(action);
+}
+
+bool CGUIWindowVideoBase::OnRateAction(const CFileItemPtr &item, int action)
+{
+	if(action != ACTION_DECREASE_RATING && action != ACTION_INCREASE_RATING)
+	{
+		return false;
+	}
+
+	CVideoDatabase db;
+	if (db.Open() == false)      // OpenForWrite() ?
+	{
+		return false;
+	}
+
+	CFileItem fileItem = CFileItem(*item);
+	float ratingOffset = (action == ACTION_DECREASE_RATING) ? -1.0f : +1.0f;
+	bool isModified = db.OnMovieUserRatingAction(fileItem, ratingOffset);
+	db.Close();
+
+	if(isModified == true)
+	{
+		// send a message to all windows to tell them to update the fileitem (eg playlistplayer, media windows)
+		CGUIMessage msg(GUI_MSG_NOTIFY_ALL, 0, 0, GUI_MSG_UPDATE_ITEM, 0, item);
+		g_windowManager.SendMessage(msg);
+	}
+
+	return isModified;
 }
 
 bool CGUIWindowVideoBase::OnMessage(CGUIMessage& message)
@@ -276,7 +314,7 @@ void CGUIWindowVideoBase::UpdateButtons()
   SET_CONTROL_LABEL(CONTROL_STACK, 14000);  // Stack
   SET_CONTROL_SELECTED(GetID(), CONTROL_STACK, CSettings::Get().GetBool("myvideos.stackvideos"));
   CONTROL_ENABLE_ON_CONDITION(CONTROL_STACK, m_stackingAvailable);
-  
+
   CGUIMediaWindow::UpdateButtons();
 }
 
@@ -450,7 +488,7 @@ bool CGUIWindowVideoBase::ShowIMDB(CFileItem *item, const ScraperPtr &info2)
     bHasInfo = true;
     movieDetails = *item->GetVideoInfoTag();
   }
-  
+
   bool needsRefresh = false;
   if (bHasInfo)
   {
@@ -929,7 +967,7 @@ bool CGUIWindowVideoBase::OnFileAction(int iItem, int action)
   // Reset the current start offset. The actual resume
   // option is set in the switch, based on the action passed.
   item->m_lStartOffset = 0;
-  
+
   switch (action)
   {
   case SELECT_ACTION_CHOOSE:
@@ -985,7 +1023,7 @@ bool CGUIWindowVideoBase::OnFileAction(int iItem, int action)
   return OnClick(iItem);
 }
 
-bool CGUIWindowVideoBase::OnInfo(int iItem) 
+bool CGUIWindowVideoBase::OnInfo(int iItem)
 {
   if (iItem < 0 || iItem >= m_vecItems->Size())
     return false;
@@ -1113,7 +1151,6 @@ bool CGUIWindowVideoBase::ShowPlaySelection(CFileItemPtr& item)
 
 bool CGUIWindowVideoBase::ShowPlaySelection(CFileItemPtr& item, const CStdString& directory)
 {
-
   CFileItemList items;
 
   if (!XFILE::CDirectory::GetDirectory(directory, items, XFILE::CDirectory::CHints(), true))
@@ -1273,7 +1310,7 @@ void CGUIWindowVideoBase::GetContextButtons(int itemNumber, CContextButtons &but
         buttons.Add(CONTEXT_BUTTON_RESUME_ITEM, GetResumeString(*(item.get())));     // Resume Video
       }
       //if the item isn't a folder or script, is a member of a list rather than a single item
-      //and we're not on the last element of the list, 
+      //and we're not on the last element of the list,
       //then add add either 'play from here' or 'play only this' depending on default behaviour
       if (!(item->m_bIsFolder || item->IsScript()) && m_vecItems->Size() > 1 && itemNumber < m_vecItems->Size()-1)
       {
@@ -1322,7 +1359,7 @@ bool CGUIWindowVideoBase::OnPlayStackPart(int iItem)
     {
       CStdString resumeString = CGUIWindowVideoBase::GetResumeString(*(parts[selectedFile - 1].get()));
       stack->m_lStartOffset = 0;
-      if (!resumeString.IsEmpty()) 
+      if (!resumeString.IsEmpty())
       {
         CContextButtons choices;
         choices.Add(SELECT_ACTION_RESUME, resumeString);
@@ -1347,8 +1384,6 @@ bool CGUIWindowVideoBase::OnPlayStackPart(int iItem)
       else
         stack->m_lStartOffset = 0;
     }
-
-
   }
 
   return true;
@@ -1368,7 +1403,7 @@ bool CGUIWindowVideoBase::OnContextButton(int itemNumber, CONTEXT_BUTTON button)
     }
   case CONTEXT_BUTTON_PLAY_PART:
     {
-      if (OnPlayStackPart(itemNumber)) 
+      if (OnPlayStackPart(itemNumber))
       {
         // call CGUIMediaWindow::OnClick() as otherwise autoresume will kick in
         CGUIMediaWindow::OnClick(itemNumber);
@@ -1700,8 +1735,8 @@ void CGUIWindowVideoBase::MarkWatched(const CFileItemPtr &item, bool bMark)
         database.SetPlayCount(*pItem, bMark ? 1 : 0);
       }
     }
-    
-    database.Close(); 
+
+    database.Close();
   }
 }
 
@@ -2190,7 +2225,7 @@ bool CGUIWindowVideoBase::OnUnAssignContent(const CStdString &path, int label1, 
     }
   }
   db.Close();
-  
+
   return false;
 }
 
@@ -2204,7 +2239,7 @@ void CGUIWindowVideoBase::OnAssignContent(const CStdString &path)
   ADDON::ScraperPtr info = db.GetScraperForPath(path, settings);
 
   ADDON::ScraperPtr info2(info);
-  
+
   if (CGUIDialogContentSettings::Show(info, settings))
   {
     if(settings.exclude || (!info && info2))

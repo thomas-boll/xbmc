@@ -67,7 +67,7 @@ string ByLabel(SortAttribute attributes, const SortItem &values)
 string ByFile(SortAttribute attributes, const SortItem &values)
 {
   CURL url(values.at(FieldPath).asString());
-  
+
   CStdString label;
   label.Format("%s %d", url.GetFileNameWithoutPath().c_str(), values.at(FieldStartOffset).asInteger());
   return label;
@@ -218,7 +218,7 @@ string ByYear(SortAttribute attributes, const SortItem &values)
     label = airDate.asString() + " ";
 
   label.AppendFormat("%i %s", (int)values.at(FieldYear).asInteger(), ByLabel(attributes, values).c_str());
- 
+
   return label;
 }
 
@@ -238,6 +238,13 @@ string ByRating(SortAttribute attributes, const SortItem &values)
 {
   CStdString label;
   label.Format("%f %s", values.at(FieldRating).asFloat(), ByLabel(attributes, values).c_str());
+  return label;
+}
+
+string ByUserRating(SortAttribute attributes, const SortItem &values)
+{
+  CStdString label;
+  label.Format("%f %s", values.at(FieldUserRating).asFloat(), ByLabel(attributes, values).c_str());
   return label;
 }
 
@@ -439,7 +446,7 @@ bool preliminarySort(const SortItem &left, const SortItem &right, bool handleFol
     leftSortSpecial = (SortSpecial)itLeft->second.asInteger();
   if ((itRight = right.find(FieldSortSpecial)) != right.end() && itRight->second.asInteger() <= (int64_t)SortSpecialOnBottom)
     rightSortSpecial = (SortSpecial)itRight->second.asInteger();
-  
+
   // one has a special sort
   if (leftSortSpecial != rightSortSpecial)
   {
@@ -452,7 +459,7 @@ bool preliminarySort(const SortItem &left, const SortItem &right, bool handleFol
       result = true;
       return true;
     }
-    
+
     // otherwise right is sorted above left
     result = false;
     return true;
@@ -543,6 +550,7 @@ map<SortBy, SortUtils::SortPreparator> fillPreparators()
   preparators[SortByCountry]                  = ByCountry;
   preparators[SortByYear]                     = ByYear;
   preparators[SortByRating]                   = ByRating;
+  preparators[SortByUserRating]               = ByUserRating;
   preparators[SortByVotes]                    = ByVotes;
   preparators[SortByTop250]                   = ByTop250;
   preparators[SortByProgramCount]             = ByProgramCount;
@@ -606,6 +614,7 @@ map<SortBy, Fields> fillSortingFields()
   sortingFields[SortByYear].insert(FieldYear);
   sortingFields[SortByYear].insert(FieldAirDate);
   sortingFields[SortByRating].insert(FieldRating);
+  sortingFields[SortByUserRating].insert(FieldUserRating);
   sortingFields[SortByVotes].insert(FieldVotes);
   sortingFields[SortByTop250].insert(FieldTop250);
   sortingFields[SortByProgramCount].insert(FieldProgramCount);
@@ -785,6 +794,7 @@ const sort_map table[] = {
   { SortByFile,                     SORT_METHOD_FILE,                         SortAttributeIgnoreFolders, 561 },
   { SortByRating,                   SORT_METHOD_SONG_RATING,                  SortAttributeNone,          563 },
   { SortByRating,                   SORT_METHOD_VIDEO_RATING,                 SortAttributeIgnoreFolders, 563 },
+  { SortByUserRating,               SORT_METHOD_VIDEO_USERRATING,             SortAttributeIgnoreFolders, 565 },
   { SortBySortTitle,                SORT_METHOD_VIDEO_SORT_TITLE,             SortAttributeIgnoreFolders, 556 },
   { SortBySortTitle,                SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE,  (SortAttribute)(SortAttributeIgnoreFolders | SortAttributeIgnoreArticle), 556 },
   { SortByYear,                     SORT_METHOD_YEAR,                         SortAttributeIgnoreFolders, 562 },

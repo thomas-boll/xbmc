@@ -92,6 +92,7 @@ bool GroupUtils::Group(GroupBy groupBy, const std::string &baseDir, const CFileI
       setInfo->m_strTitle = pItem->GetLabel();
 
       int ratings = 0;
+      int userratings = 0;
       int iWatched = 0; // have all the movies been played at least once?
       std::set<CStdString> pathSet;
       for (std::set<CFileItemPtr>::const_iterator movie = set->second.begin(); movie != set->second.end(); movie++)
@@ -103,19 +104,26 @@ bool GroupUtils::Group(GroupBy groupBy, const std::string &baseDir, const CFileI
           ratings++;
           setInfo->m_fRating += movieInfo->m_fRating;
         }
-        
+
+        // handle userrating
+        if (movieInfo->m_fUserRating > 0.0f)
+        {
+          userratings++;
+          setInfo->m_fUserRating += movieInfo->m_fUserRating;
+        }
+
         // handle year
         if (movieInfo->m_iYear > setInfo->m_iYear)
           setInfo->m_iYear = movieInfo->m_iYear;
-        
+
         // handle lastplayed
         if (movieInfo->m_lastPlayed.IsValid() && movieInfo->m_lastPlayed > setInfo->m_lastPlayed)
           setInfo->m_lastPlayed = movieInfo->m_lastPlayed;
-        
+
         // handle dateadded
         if (movieInfo->m_dateAdded.IsValid() && movieInfo->m_dateAdded > setInfo->m_dateAdded)
           setInfo->m_dateAdded = movieInfo->m_dateAdded;
-        
+
         // handle playcount/watched
         setInfo->m_playCount += movieInfo->m_playCount;
         if (movieInfo->m_playCount > 0)
@@ -132,7 +140,10 @@ bool GroupUtils::Group(GroupBy groupBy, const std::string &baseDir, const CFileI
 
       if (ratings > 1)
         pItem->GetVideoInfoTag()->m_fRating /= ratings;
-        
+
+      if (userratings > 1)
+        pItem->GetVideoInfoTag()->m_fUserRating /= userratings;
+
       setInfo->m_playCount = iWatched >= (int)set->second.size() ? (setInfo->m_playCount / set->second.size()) : 0;
       pItem->SetProperty("total", (int)set->second.size());
       pItem->SetProperty("watched", iWatched);

@@ -272,6 +272,7 @@ namespace INFO
 #define VIDEOPLAYER_PARENTAL_RATING   307
 #define VIDEOPLAYER_HAS_EPG           308
 #define VIDEOPLAYER_VOTES             309
+#define VIDEOPLAYER_USERRATING        310
 
 #define CONTAINER_CAN_FILTER         342
 #define CONTAINER_CAN_FILTERADVANCED 343
@@ -634,6 +635,7 @@ namespace INFO
 #define LISTITEM_PROGRESS           (LISTITEM_START + 137)
 #define LISTITEM_HAS_EPG            (LISTITEM_START + 138)
 #define LISTITEM_VOTES              (LISTITEM_START + 139)
+#define LISTITEM_USERRATING         (LISTITEM_START + 140)
 
 #define LISTITEM_PROPERTY_START     (LISTITEM_START + 200)
 #define LISTITEM_PROPERTY_END       (LISTITEM_PROPERTY_START + 1000)
@@ -869,11 +871,11 @@ protected:
 
   /*! \brief Split an info string into it's constituent parts and parameters
    Format is:
-     
+
      info1(params1).info2(params2).info3(params3) ...
-   
+
    where the parameters are an optional comma separated parameter list.
-   
+
    \param infoString the original string
    \param info the resulting pairs of info and parameters.
    */
@@ -951,7 +953,3 @@ protected:
  */
 extern CGUIInfoManager g_infoManager;
 #endif
-
-
-
-

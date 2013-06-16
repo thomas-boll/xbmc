@@ -71,6 +71,7 @@ static const translateField fields[] = {
   { "lastplayed",        FieldLastPlayed,              SortByLastPlayed,               CSmartPlaylistRule::DATE_FIELD,     false, 568 },
   { "inprogress",        FieldInProgress,              SortByNone,                     CSmartPlaylistRule::BOOLEAN_FIELD,  false, 575 },
   { "rating",            FieldRating,                  SortByRating,                   CSmartPlaylistRule::NUMERIC_FIELD,  false, 563 },
+  { "userrating",        FieldUserRating,              SortByUserRating,               CSmartPlaylistRule::NUMERIC_FIELD,  false, 565 },
   { "votes",             FieldVotes,                   SortByVotes,                    CSmartPlaylistRule::TEXT_FIELD,     false, 205 },
   { "top250",            FieldTop250,                  SortByTop250,                   CSmartPlaylistRule::NUMERIC_FIELD,  false, 13409 },
   { "mpaarating",        FieldMPAA,                    SortByMPAA,                     CSmartPlaylistRule::TEXT_FIELD,     false, 20074 },
@@ -452,6 +453,7 @@ vector<Field> CSmartPlaylistRule::GetFields(const CStdString &type)
     fields.push_back(FieldTvShowStatus);
     fields.push_back(FieldVotes);
     fields.push_back(FieldRating);
+    fields.push_back(FieldUserRating);
     fields.push_back(FieldYear);
     fields.push_back(FieldGenre);
     fields.push_back(FieldDirector);
@@ -474,6 +476,7 @@ vector<Field> CSmartPlaylistRule::GetFields(const CStdString &type)
     fields.push_back(FieldPlot);
     fields.push_back(FieldVotes);
     fields.push_back(FieldRating);
+    fields.push_back(FieldUserRating);
     fields.push_back(FieldTime);
     fields.push_back(FieldWriter);
     fields.push_back(FieldAirDate);
@@ -501,6 +504,7 @@ vector<Field> CSmartPlaylistRule::GetFields(const CStdString &type)
     fields.push_back(FieldTagline);
     fields.push_back(FieldVotes);
     fields.push_back(FieldRating);
+    fields.push_back(FieldUserRating);
     fields.push_back(FieldTime);
     fields.push_back(FieldWriter);
     fields.push_back(FieldPlaycount);
@@ -552,7 +556,7 @@ vector<Field> CSmartPlaylistRule::GetFields(const CStdString &type)
     fields.push_back(FieldVideoAspectRatio);
   }
   fields.push_back(FieldPlaylist);
-  
+
   return fields;
 }
 
@@ -599,6 +603,7 @@ std::vector<SortBy> CSmartPlaylistRule::GetOrders(const CStdString &type)
     orders.push_back(SortByTvShowStatus);
     orders.push_back(SortByVotes);
     orders.push_back(SortByRating);
+    orders.push_back(SortByUserRating);
     orders.push_back(SortByYear);
     orders.push_back(SortByGenre);
     orders.push_back(SortByNumberOfEpisodes);
@@ -616,6 +621,7 @@ std::vector<SortBy> CSmartPlaylistRule::GetOrders(const CStdString &type)
     orders.push_back(SortByTvShowTitle);
     orders.push_back(SortByVotes);
     orders.push_back(SortByRating);
+    orders.push_back(SortByUserRating);
     orders.push_back(SortByTime);
     orders.push_back(SortByPlaycount);
     orders.push_back(SortByLastPlayed);
@@ -633,6 +639,7 @@ std::vector<SortBy> CSmartPlaylistRule::GetOrders(const CStdString &type)
     orders.push_back(SortBySortTitle);
     orders.push_back(SortByVotes);
     orders.push_back(SortByRating);
+    orders.push_back(SortByUserRating);
     orders.push_back(SortByTime);
     orders.push_back(SortByPlaycount);
     orders.push_back(SortByLastPlayed);
@@ -662,7 +669,7 @@ std::vector<SortBy> CSmartPlaylistRule::GetOrders(const CStdString &type)
     orders.push_back(SortByDateAdded);
   }
   orders.push_back(SortByRandom);
-	
+
   return orders;
 }
 
@@ -1092,7 +1099,7 @@ CStdString CSmartPlaylistRule::GetWhereClause(const CDatabase &db, const CStdStr
       query.Format(fmt.c_str(), GetField(m_field,strType).c_str());
       query += negate + parameter;
     }
-    
+
     it++;
     if (query.Equals(negate + parameter))
       query = "1";
@@ -1119,7 +1126,7 @@ CSmartPlaylistRuleCombination::CSmartPlaylistRuleCombination()
 CStdString CSmartPlaylistRuleCombination::GetWhereClause(const CDatabase &db, const CStdString& strType, std::set<CStdString> &referencedPlaylists) const
 {
   CStdString rule, currentRule;
-  
+
   // translate the combinations into SQL
   for (vector<CSmartPlaylistRuleCombination>::const_iterator it = m_combinations.begin(); it != m_combinations.end(); ++it)
   {
@@ -1175,7 +1182,7 @@ bool CSmartPlaylistRuleCombination::Load(const CVariant &obj)
 {
   if (!obj.isObject() && !obj.isArray())
     return false;
-  
+
   CVariant child;
   if (obj.isObject())
   {
@@ -1231,7 +1238,6 @@ bool CSmartPlaylistRuleCombination::Save(CVariant &obj) const
       if (combo->Save(comboObj))
         comboArray.push_back(comboObj);
     }
-
   }
   if (!m_rules.empty())
   {

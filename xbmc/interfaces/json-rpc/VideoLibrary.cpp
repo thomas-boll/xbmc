@@ -245,7 +245,7 @@ JSONRPC_STATUS CVideoLibrary::GetEpisodes(const CStdString &method, ITransportLa
 
   int tvshowID = (int)parameterObject["tvshowid"].asInteger();
   int season   = (int)parameterObject["season"].asInteger();
-  
+
   CStdString strPath;
   strPath.Format("videodb://tvshows/titles/%i/%i/", tvshowID, season);
 
@@ -437,7 +437,7 @@ JSONRPC_STATUS CVideoLibrary::GetGenres(const CStdString &method, ITransportLaye
     strPath += "musicvideos";
   }
   strPath += "/genres/";
- 
+
   CVideoDatabase videodatabase;
   if (!videodatabase.Open())
     return InternalError;
@@ -809,7 +809,7 @@ JSONRPC_STATUS CVideoLibrary::GetAdditionalEpisodeDetails(const CVariant &parame
         videodatabase.GetEpisodeInfo("", *(items[index]->GetVideoInfoTag()), items[index]->GetVideoInfoTag()->m_iDbId);
     }
   }
-  
+
   int size = items.Size();
   if (!limit && items.HasProperty("total") && items.GetProperty("total").asInteger() > size)
     size = (int)items.GetProperty("total").asInteger();
@@ -909,6 +909,8 @@ void CVideoLibrary::UpdateVideoTag(const CVariant &parameterObject, CVideoInfoTa
     details.m_iTrack = (int)parameterObject["track"].asInteger();
   if (ParameterNotNull(parameterObject, "rating"))
     details.m_fRating = parameterObject["rating"].asFloat();
+  if (ParameterNotNull(parameterObject, "userrating"))
+    details.m_fUserRating = parameterObject["userrating"].asFloat();
   if (ParameterNotNull(parameterObject, "mpaa"))
     details.m_strMPAARating = parameterObject["mpaa"].asString();
   if (ParameterNotNull(parameterObject, "imdbnumber"))

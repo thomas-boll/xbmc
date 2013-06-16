@@ -58,7 +58,6 @@ public:
   static bool ShowPlaySelection(CFileItemPtr& item);
   static bool ShowPlaySelection(CFileItemPtr& item, const CStdString& directory);
 
-
   /*! \brief Show the resume menu for this item (if it has a resume bookmark)
    If a resume bookmark is found, we set the item's m_lStartOffset to STARTOFFSET_RESUME.
    Note that we do this in favour of setting the resume point, as we need additional
@@ -141,6 +140,8 @@ protected:
   void OnSearch();
   void OnSearchItemFound(const CFileItem* pSelItem);
   int GetScraperForItem(CFileItem *item, ADDON::ScraperPtr &info, VIDEO::SScanSettings& settings);
+
+  bool OnRateAction(const CFileItemPtr &item, int action);
 
   static bool OnUnAssignContent(const CStdString &path, int label1, int label2, int label3);
 

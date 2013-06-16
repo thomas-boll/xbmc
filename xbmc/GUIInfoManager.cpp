@@ -354,6 +354,7 @@ const infomap videoplayer[] =    {{ "title",            VIDEOPLAYER_TITLE },
                                   { "episode",          VIDEOPLAYER_EPISODE },
                                   { "season",           VIDEOPLAYER_SEASON },
                                   { "rating",           VIDEOPLAYER_RATING },
+                                  { "userrating",       VIDEOPLAYER_USERRATING },
                                   { "ratingandvotes",   VIDEOPLAYER_RATING_AND_VOTES },
                                   { "votes",            VIDEOPLAYER_VOTES },
                                   { "tvshowtitle",      VIDEOPLAYER_TVSHOW },
@@ -451,6 +452,7 @@ const infomap listitem_labels[]= {{ "thumb",            LISTITEM_THUMB },
                                   { "date",             LISTITEM_DATE },
                                   { "size",             LISTITEM_SIZE },
                                   { "rating",           LISTITEM_RATING },
+                                  { "userrating",       LISTITEM_USERRATING },
                                   { "ratingandvotes",   LISTITEM_RATING_AND_VOTES },
                                   { "votes",            LISTITEM_VOTES },
                                   { "programcount",     LISTITEM_PROGRAM_COUNT },
@@ -1476,6 +1478,7 @@ CStdString CGUIInfoManager::GetLabel(int info, int contextWindow, CStdString *fa
   case VIDEOPLAYER_EPISODE:
   case VIDEOPLAYER_SEASON:
   case VIDEOPLAYER_RATING:
+  case VIDEOPLAYER_USERRATING:
   case VIDEOPLAYER_RATING_AND_VOTES:
   case VIDEOPLAYER_TVSHOW:
   case VIDEOPLAYER_PREMIERED:
@@ -3204,7 +3207,7 @@ CStdString CGUIInfoManager::GetImage(int info, int contextWindow, CStdString *fa
       return ((CGUIMediaWindow *)window)->CurrentDirectory().GetArt("season.thumb");
   }
   else if (info == LISTITEM_THUMB || info == LISTITEM_ICON || info == LISTITEM_ACTUAL_ICON ||
-          info == LISTITEM_OVERLAY || info == LISTITEM_RATING || info == LISTITEM_STAR_RATING)
+          info == LISTITEM_OVERLAY || info == LISTITEM_RATING || info == LISTITEM_USERRATING || info == LISTITEM_STAR_RATING)
   {
     CGUIWindow *window = GetWindowWithCondition(contextWindow, WINDOW_CONDITION_HAS_LIST_ITEMS);
     if (window)
@@ -3674,6 +3677,14 @@ CStdString CGUIInfoManager::GetVideoLabel(int item)
         return strRating;
       }
       break;
+    case VIDEOPLAYER_USERRATING:
+      {
+        CStdString strRating;
+        if (m_currentFile->GetVideoInfoTag()->m_fUserRating > 0.f)
+          strRating.Format("%.1f", m_currentFile->GetVideoInfoTag()->m_fUserRating);
+        return strRating;
+      }
+      break;
     case VIDEOPLAYER_RATING_AND_VOTES:
       {
         CStdString strRatingAndVotes;
@@ -3722,7 +3733,7 @@ CStdString CGUIInfoManager::GetVideoLabel(int item)
         CStdString strEpisode;
         if (m_currentFile->GetVideoInfoTag()->m_iSeason == 0) // prefix episode with 'S'
           strEpisode.Format("S%i", m_currentFile->GetVideoInfoTag()->m_iEpisode);
-        else 
+        else
           strEpisode.Format("%i", m_currentFile->GetVideoInfoTag()->m_iEpisode);
         return strEpisode;
       }
@@ -4381,6 +4392,13 @@ CStdString CGUIInfoManager::GetItemLabel(const CFileItem *item, int info, CStdSt
       { // song rating.  Images will probably be better than numbers for this in the long run
         rating = item->GetMusicInfoTag()->GetRating();
       }
+      return rating;
+    }
+  case LISTITEM_USERRATING:
+    {
+      CStdString rating;
+      if (item->HasVideoInfoTag() && item->GetVideoInfoTag()->m_fUserRating > 0.f) // movie rating
+        rating.Format("%.1f", item->GetVideoInfoTag()->m_fUserRating);
       return rating;
     }
   case LISTITEM_RATING_AND_VOTES:

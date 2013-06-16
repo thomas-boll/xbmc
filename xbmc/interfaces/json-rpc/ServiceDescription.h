@@ -25,7 +25,7 @@ namespace JSONRPC
   const char* const JSONRPC_SERVICE_VERSION     = "6.5.2";
   const char* const JSONRPC_SERVICE_DESCRIPTION = "JSON-RPC API of XBMC";
 
-  const char* const JSONRPC_SERVICE_TYPES[] = {  
+  const char* const JSONRPC_SERVICE_TYPES[] = {
     "\"Optional.Boolean\": {"
       "\"type\": [ \"null\", \"boolean\" ],"
       "\"default\": null"
@@ -127,7 +127,7 @@ namespace JSONRPC
       "\"properties\": {"
         "\"method\": { \"type\": \"string\", \"default\": \"none\","
           "\"enum\": [ \"none\", \"label\", \"date\", \"size\", \"file\", \"path\", \"drivetype\", \"title\", \"track\", \"time\", \"artist\","
-                    "\"album\", \"albumtype\", \"genre\", \"country\", \"year\", \"rating\", \"votes\", \"top250\", \"programcount\","
+                    "\"album\", \"albumtype\", \"genre\", \"country\", \"year\", \"rating\", \"userrating\", \"votes\", \"top250\", \"programcount\","
                     "\"playlist\", \"episode\", \"season\", \"totalepisodes\", \"watchedepisodes\", \"tvshowstatus\", \"tvshowtitle\","
                     "\"sorttitle\", \"productioncode\", \"mpaa\", \"studio\", \"dateadded\", \"lastplayed\", \"playcount\", \"listeners\","
                     "\"bitrate\", \"random\" ]"
@@ -510,7 +510,7 @@ namespace JSONRPC
       "\"extends\": \"Item.Fields.Base\","
       "\"items\": { \"type\": \"string\","
         "\"description\": \"Requesting the cast, showlink and/or tag field will result in increased response times\","
-        "\"enum\": [ \"title\", \"genre\", \"year\", \"rating\", \"director\", \"trailer\","
+        "\"enum\": [ \"title\", \"genre\", \"year\", \"rating\", \"userrating\", \"director\", \"trailer\","
                   "\"tagline\", \"plot\", \"plotoutline\", \"originaltitle\", \"lastplayed\","
                   "\"playcount\", \"writer\", \"studio\", \"mpaa\", \"cast\", \"country\","
                   "\"imdbnumber\", \"runtime\", \"set\", \"showlink\", \"streamdetails\","
@@ -528,7 +528,7 @@ namespace JSONRPC
       "\"extends\": \"Item.Fields.Base\","
       "\"items\": { \"type\": \"string\","
         "\"description\": \"Requesting the cast field will result in increased response times\","
-        "\"enum\": [ \"title\", \"genre\", \"year\", \"rating\", \"plot\","
+        "\"enum\": [ \"title\", \"genre\", \"year\", \"rating\", \"userrating\", \"plot\","
                   "\"studio\", \"mpaa\", \"cast\", \"playcount\", \"episode\","
                   "\"imdbnumber\", \"premiered\", \"votes\", \"lastplayed\","
                   "\"fanart\", \"thumbnail\", \"file\", \"originaltitle\","
@@ -547,7 +547,7 @@ namespace JSONRPC
       "\"extends\": \"Item.Fields.Base\","
       "\"items\": { \"type\": \"string\","
         "\"description\": \"Requesting the cast field will result in increased response times\","
-        "\"enum\": [ \"title\", \"plot\", \"votes\", \"rating\", \"writer\","
+        "\"enum\": [ \"title\", \"plot\", \"votes\", \"rating\", \"userrating\", \"writer\","
                   "\"firstaired\", \"playcount\", \"runtime\", \"director\","
                   "\"productioncode\", \"season\", \"episode\", \"originaltitle\","
                   "\"showtitle\", \"cast\", \"streamdetails\", \"lastplayed\", \"fanart\","
@@ -658,6 +658,7 @@ namespace JSONRPC
         "\"genre\": { \"$ref\": \"Array.String\" },"
         "\"year\": { \"type\": \"integer\" },"
         "\"rating\": { \"type\": \"number\" },"
+        "\"userrating\": { \"type\": \"number\" },"
         "\"trailer\": { \"type\": \"string\" },"
         "\"tagline\": { \"type\": \"string\" },"
         "\"plotoutline\": { \"type\": \"string\" },"
@@ -699,6 +700,7 @@ namespace JSONRPC
         "\"genre\": { \"$ref\": \"Array.String\" },"
         "\"year\": { \"type\": \"integer\" },"
         "\"rating\": { \"type\": \"number\" },"
+        "\"userrating\": { \"type\": \"number\" },"
         "\"originaltitle\": { \"type\": \"string\" },"
         "\"sorttitle\": { \"type\": \"string\" },"
         "\"studio\": { \"$ref\": \"Array.String\" },"
@@ -730,6 +732,7 @@ namespace JSONRPC
         "\"episodeid\": { \"$ref\": \"Library.Id\", \"required\": true },"
         "\"votes\": { \"type\": \"string\" },"
         "\"rating\": { \"type\": \"number\" },"
+        "\"userrating\": { \"type\": \"number\" },"
         "\"writer\": { \"$ref\": \"Array.String\" },"
         "\"firstaired\": { \"type\": \"string\" },"
         "\"productioncode\": { \"type\": \"string\" },"
@@ -1061,7 +1064,7 @@ namespace JSONRPC
     "\"List.Fields.All\": {"
       "\"extends\": \"Item.Fields.Base\","
       "\"items\": { \"type\": \"string\","
-        "\"enum\": [ \"title\", \"artist\", \"albumartist\", \"genre\", \"year\", \"rating\","
+        "\"enum\": [ \"title\", \"artist\", \"albumartist\", \"genre\", \"year\", \"rating\", \"userrating\","
                   "\"album\", \"track\", \"duration\", \"comment\", \"lyrics\", \"musicbrainztrackid\","
                   "\"musicbrainzartistid\", \"musicbrainzalbumid\", \"musicbrainzalbumartistid\","
                   "\"playcount\", \"fanart\", \"director\", \"trailer\", \"tagline\", \"plot\","
@@ -1091,7 +1094,7 @@ namespace JSONRPC
     "\"List.Fields.Files\": {"
       "\"extends\": \"Item.Fields.Base\","
       "\"items\": { \"type\": \"string\","
-        "\"enum\": [ \"title\", \"artist\", \"albumartist\", \"genre\", \"year\", \"rating\","
+        "\"enum\": [ \"title\", \"artist\", \"albumartist\", \"genre\", \"year\", \"rating\", \"userrating\","
                   "\"album\", \"track\", \"duration\", \"comment\", \"lyrics\", \"musicbrainztrackid\","
                   "\"musicbrainzartistid\", \"musicbrainzalbumid\", \"musicbrainzalbumartistid\","
                   "\"playcount\", \"fanart\", \"director\", \"trailer\", \"tagline\", \"plot\","
@@ -1268,7 +1271,7 @@ namespace JSONRPC
     "}"
   };
 
-  const char* const JSONRPC_SERVICE_METHODS[] = {  
+  const char* const JSONRPC_SERVICE_METHODS[] = {
     "\"JSONRPC.Introspect\": {"
       "\"type\": \"method\","
       "\"description\": \"Enumerates all actions and descriptions\","
@@ -2529,6 +2532,7 @@ namespace JSONRPC
         "{ \"name\": \"plot\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"genre\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ], \"default\": null },"
         "{ \"name\": \"rating\", \"$ref\": \"Optional.Number\" },"
+		"{ \"name\": \"userrating\", \"$ref\": \"Optional.Number\" },"
         "{ \"name\": \"mpaa\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"imdbnumber\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"votes\", \"$ref\": \"Optional.String\" },"
@@ -2564,6 +2568,7 @@ namespace JSONRPC
         "{ \"name\": \"plot\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"genre\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ], \"default\": null },"
         "{ \"name\": \"rating\", \"$ref\": \"Optional.Number\" },"
+		"{ \"name\": \"userrating\", \"$ref\": \"Optional.Number\" },"
         "{ \"name\": \"mpaa\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"imdbnumber\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"premiered\", \"$ref\": \"Optional.String\" },"
@@ -2592,6 +2597,7 @@ namespace JSONRPC
         "{ \"name\": \"director\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ], \"default\": null },"
         "{ \"name\": \"plot\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"rating\", \"$ref\": \"Optional.Number\" },"
+		"{ \"name\": \"userrating\", \"$ref\": \"Optional.Number\" },"
         "{ \"name\": \"votes\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"lastplayed\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"writer\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ], \"default\": null },"
@@ -3200,7 +3206,7 @@ namespace JSONRPC
     "}"
   };
 
-  const char* const JSONRPC_SERVICE_NOTIFICATIONS[] = {  
+  const char* const JSONRPC_SERVICE_NOTIFICATIONS[] = {
     "\"Player.OnPlay\": {"
       "\"type\": \"notification\","
       "\"description\": \"Playback of a media item has been started or the playback speed has changed. If there is no ID available extra information will be provided.\","

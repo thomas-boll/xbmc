@@ -72,6 +72,7 @@ void CVideoInfoTag::Reset()
   m_iSpecialSortSeason = -1;
   m_iSpecialSortEpisode = -1;
   m_fRating = 0.0f;
+  m_fUserRating = 0.0f;
   m_iDbId = -1;
   m_iFileId = -1;
   m_iBookmarkId = -1;
@@ -112,6 +113,7 @@ bool CVideoInfoTag::Save(TiXmlNode *node, const CStdString &tag, bool savePathIn
   if (!m_strSortTitle.IsEmpty())
     XMLUtils::SetString(movie, "sorttitle", m_strSortTitle);
   XMLUtils::SetFloat(movie, "rating", m_fRating);
+  XMLUtils::SetFloat(movie, "userrating", m_fUserRating);
   XMLUtils::SetFloat(movie, "epbookmark", m_fEpBookmark);
   XMLUtils::SetInt(movie, "year", m_iYear);
   XMLUtils::SetInt(movie, "top250", m_iTop250);
@@ -238,7 +240,7 @@ bool CVideoInfoTag::Save(TiXmlNode *node, const CStdString &tag, bool savePathIn
   }
   XMLUtils::SetStringArray(movie, "artist", m_artist);
   XMLUtils::SetStringArray(movie, "showlink", m_showLink);
- 
+
   TiXmlElement resume("resume");
   XMLUtils::SetFloat(&resume, "position", (float)m_resumePoint.timeInSeconds);
   XMLUtils::SetFloat(&resume, "total", (float)m_resumePoint.totalTimeInSeconds);
@@ -334,6 +336,7 @@ void CVideoInfoTag::Archive(CArchive& ar)
     ar << m_dateAdded.GetAsDBDateTime();
     ar << m_type;
     ar << m_iIdSeason;
+    ar << m_fUserRating;
   }
   else
   {
@@ -415,6 +418,7 @@ void CVideoInfoTag::Archive(CArchive& ar)
     m_dateAdded.SetFromDBDateTime(dateAdded);
     ar >> m_type;
     ar >> m_iIdSeason;
+    ar >> m_fUserRating;
   }
 }
 
@@ -468,6 +472,7 @@ void CVideoInfoTag::Serialize(CVariant& value) const
   value["episode"] = m_iEpisode;
   value["uniqueid"]["unknown"] = m_strUniqueId;
   value["rating"] = m_fRating;
+  value["userrating"] = m_fUserRating;
   value["dbid"] = m_iDbId;
   value["fileid"] = m_iFileId;
   value["track"] = m_iTrack;
@@ -518,6 +523,7 @@ void CVideoInfoTag::ToSortable(SortItem& sortable)
   sortable[FieldEpisodeNumberSpecialSort] = m_iSpecialSortEpisode;
   sortable[FieldSeasonSpecialSort] = m_iSpecialSortSeason;
   sortable[FieldRating] = m_fRating;
+  sortable[FieldUserRating] = m_fUserRating;
   sortable[FieldId] = m_iDbId;
   sortable[FieldTrackNumber] = m_iTrack;
   sortable[FieldTag] = m_tags;
@@ -525,11 +531,11 @@ void CVideoInfoTag::ToSortable(SortItem& sortable)
   sortable[FieldVideoResolution] = m_streamDetails.GetVideoHeight();
   sortable[FieldVideoAspectRatio] = m_streamDetails.GetVideoAspect();
   sortable[FieldVideoCodec] = m_streamDetails.GetVideoCodec();
-  
+
   sortable[FieldAudioChannels] = m_streamDetails.GetAudioChannels();
   sortable[FieldAudioCodec] = m_streamDetails.GetAudioCodec();
   sortable[FieldAudioLanguage] = m_streamDetails.GetAudioLanguage();
-  
+
   sortable[FieldSubtitleLanguage] = m_streamDetails.GetSubtitleLanguage();
 
   sortable[FieldInProgress] = m_resumePoint.IsPartWay();
@@ -559,12 +565,19 @@ void CVideoInfoTag::ParseNative(const TiXmlElement* movie, bool prioritise)
   XMLUtils::GetString(movie, "showtitle", m_strShowTitle);
   XMLUtils::GetString(movie, "sorttitle", m_strSortTitle);
   XMLUtils::GetFloat(movie, "rating", m_fRating);
+  XMLUtils::GetFloat(movie, "userrating", m_fUserRating);
   XMLUtils::GetFloat(movie, "epbookmark", m_fEpBookmark);
   int max_value = 10;
   const TiXmlElement* rElement = movie->FirstChildElement("rating");
   if (rElement && (rElement->QueryIntAttribute("max", &max_value) == TIXML_SUCCESS) && max_value>=1)
   {
     m_fRating = m_fRating / max_value * 10; // Normalise the Movie Rating to between 1 and 10
+  }
+  float max_value2 = 10.0f;
+  const TiXmlElement* rElement2 = movie->FirstChildElement("userrating");
+  if (rElement2 && (rElement2->QueryFloatAttribute("max", &max_value2) == TIXML_SUCCESS) && max_value2 > 0.0f)
+  {
+    m_fUserRating = m_fUserRating / (float)max_value2 * 10.0f; // Normalise the Movie UserRating to between 1 and 10
   }
   XMLUtils::GetInt(movie, "year", m_iYear);
   XMLUtils::GetInt(movie, "top250", m_iTop250);
@@ -623,7 +636,7 @@ void CVideoInfoTag::ParseNative(const TiXmlElement* movie, bool prioritise)
   if (prioritise && iThumbCount && iThumbCount != m_strPictureURL.m_url.size())
   {
     rotate(m_strPictureURL.m_url.begin(),
-           m_strPictureURL.m_url.begin()+iThumbCount, 
+           m_strPictureURL.m_url.begin()+iThumbCount,
            m_strPictureURL.m_url.end());
     m_strPictureURL.m_xml = xmlAdd;
   }

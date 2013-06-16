@@ -74,6 +74,7 @@ typedef enum {
   FieldLastPlayed,
   FieldInProgress,
   FieldRating,
+  FieldUserRating,
   FieldComment,
   FieldDateAdded,
   FieldTvShowTitle,
@@ -158,7 +159,7 @@ public:
   static std::string GetField(Field field, MediaType mediaType, DatabaseQueryPart queryPart);
   static int GetFieldIndex(Field field, MediaType mediaType);
   static bool GetSelectFields(const Fields &fields, MediaType mediaType, FieldList &selectFields);
-  
+
   static bool GetFieldValue(const dbiplus::field_value &fieldValue, CVariant &variantValue);
   static bool GetDatabaseResults(MediaType mediaType, const FieldList &fields, const std::auto_ptr<dbiplus::Dataset> &dataset, DatabaseResults &results);
 

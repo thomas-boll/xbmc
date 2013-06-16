@@ -297,7 +297,6 @@
 #include "osx/DarwinUtils.h"
 #endif
 
-
 #ifdef HAS_DVD_DRIVE
 #include <cdio/logging.h>
 #endif
@@ -458,7 +457,6 @@ CApplication::~CApplication(void)
   delete m_seekHandler;
   delete m_playerController;
   delete m_pInertialScrollingHandler;
-
 }
 
 bool CApplication::OnEvent(XBMC_Event& newEvent)
@@ -1046,7 +1044,6 @@ bool CApplication::InitDirectoriesLinux()
     g_advancedSettings.m_logFolder = strTempPath;
 
     CreateUserDirs();
-
   }
   else
   {
@@ -1317,7 +1314,7 @@ bool CApplication::Initialize()
 
     g_windowManager.Add(new CGUIDialogPeripheralManager);
     g_windowManager.Add(new CGUIDialogPeripheralSettings);
-    
+
     g_windowManager.Add(new CGUIDialogMediaFilter);
 
     g_windowManager.Add(new CGUIWindowMusicPlayList);
@@ -1399,7 +1396,6 @@ bool CApplication::Initialize()
         g_windowManager.ActivateWindow(g_SkinInfo->GetFirstWindow());
       }
     }
-
   }
   else //No GUI Created
   {
@@ -1665,16 +1661,16 @@ void CApplication::ReloadSkin()
   m_skinReloading = false;
   CGUIMessage msg(GUI_MSG_LOAD_SKIN, -1, g_windowManager.GetActiveWindow());
   g_windowManager.SendMessage(msg);
-  
+
   // Reload the skin, restoring the previously focused control.  We need this as
   // the window unload will reset all control states.
   int iCtrlID = -1;
   CGUIWindow* pWindow = g_windowManager.GetWindow(g_windowManager.GetActiveWindow());
   if (pWindow)
     iCtrlID = pWindow->GetFocusedControlID();
-  
+
   g_application.LoadSkin(CSettings::Get().GetString("lookandfeel.skin"));
- 
+
   if (iCtrlID != -1)
   {
     pWindow = g_windowManager.GetWindow(g_windowManager.GetActiveWindow());
@@ -2008,7 +2004,6 @@ bool CApplication::RenderNoPresent()
     if (overlay) overlay->Close(true);
     overlay = (CGUIDialog *)g_windowManager.GetWindow(WINDOW_DIALOG_MUSIC_OVERLAY);
     if (overlay) overlay->Close(true);
-
   }
 
   bool hasRendered = g_windowManager.Render();
@@ -2078,7 +2073,6 @@ void CApplication::Render()
         else if (lowfps)
           singleFrameTime = 200;  // 5 fps, <=200 ms latency to wake up
       }
-
     }
   }
 
@@ -2161,7 +2155,6 @@ void CApplication::SetStandAlone(bool value)
 
 bool CApplication::OnKey(const CKey& key)
 {
-
   // Turn the mouse off, as we've just got a keypress from controller or remote
   g_Mouse.SetActive(false);
 
@@ -2370,8 +2363,7 @@ bool CApplication::OnAction(const CAction &action)
   if (action.IsMouse())
     g_Mouse.SetActive(true);
 
-  
-  if (action.GetID() == ACTION_CREATE_EPISODE_BOOKMARK)   
+  if (action.GetID() == ACTION_CREATE_EPISODE_BOOKMARK)
   {
     CGUIDialogVideoBookmarks::OnAddEpisodeBookmark();
   }
@@ -2379,7 +2371,7 @@ bool CApplication::OnAction(const CAction &action)
   {
     CGUIDialogVideoBookmarks::OnAddBookmark();
   }
-  
+
   // The action PLAYPAUSE behaves as ACTION_PAUSE if we are currently
   // playing or ACTION_PLAYER_PLAY if we are not playing.
   if (action.GetID() == ACTION_PLAYER_PLAYPAUSE)
@@ -2440,38 +2432,69 @@ bool CApplication::OnAction(const CAction &action)
     return true;
   }
 
-  if ((action.GetID() == ACTION_INCREASE_RATING || action.GetID() == ACTION_DECREASE_RATING) && IsPlayingAudio())
+  if ((action.GetID() == ACTION_INCREASE_RATING || action.GetID() == ACTION_DECREASE_RATING))
   {
-    const CMusicInfoTag *tag = g_infoManager.GetCurrentSongTag();
-    if (tag)
-    {
-      *m_itemCurrentFile->GetMusicInfoTag() = *tag;
-      char rating = tag->GetRating();
-      bool needsUpdate(false);
-      if (rating > '0' && action.GetID() == ACTION_DECREASE_RATING)
-      {
-        m_itemCurrentFile->GetMusicInfoTag()->SetRating(rating - 1);
-        needsUpdate = true;
-      }
-      else if (rating < '5' && action.GetID() == ACTION_INCREASE_RATING)
-      {
-        m_itemCurrentFile->GetMusicInfoTag()->SetRating(rating + 1);
-        needsUpdate = true;
-      }
-      if (needsUpdate)
-      {
-        CMusicDatabase db;
-        if (db.Open())      // OpenForWrite() ?
-        {
-          db.SetSongRating(m_itemCurrentFile->GetPath(), m_itemCurrentFile->GetMusicInfoTag()->GetRating());
-          db.Close();
-        }
-        // send a message to all windows to tell them to update the fileitem (eg playlistplayer, media windows)
-        CGUIMessage msg(GUI_MSG_NOTIFY_ALL, 0, 0, GUI_MSG_UPDATE_ITEM, 0, m_itemCurrentFile);
-        g_windowManager.SendMessage(msg);
-      }
-    }
-    return true;
+	  if(IsPlayingAudio())
+	  {
+		const CMusicInfoTag *songtag = g_infoManager.GetCurrentSongTag();
+		if (songtag)
+		{
+		  *m_itemCurrentFile->GetMusicInfoTag() = *songtag;
+		  char rating = songtag->GetRating();
+		  bool needsUpdate(false);
+		  if (rating > '0' && action.GetID() == ACTION_DECREASE_RATING)
+		  {
+			m_itemCurrentFile->GetMusicInfoTag()->SetRating(rating - 1);
+			needsUpdate = true;
+		  }
+		  else if (rating < '5' && action.GetID() == ACTION_INCREASE_RATING)
+		  {
+			m_itemCurrentFile->GetMusicInfoTag()->SetRating(rating + 1);
+			needsUpdate = true;
+		  }
+		  if (needsUpdate)
+		  {
+			CMusicDatabase db;
+			if (db.Open())      // OpenForWrite() ?
+			{
+			  db.SetSongRating(m_itemCurrentFile->GetPath(), m_itemCurrentFile->GetMusicInfoTag()->GetRating());
+			  db.Close();
+			}
+			// send a message to all windows to tell them to update the fileitem (eg playlistplayer, media windows)
+			CGUIMessage msg(GUI_MSG_NOTIFY_ALL, 0, 0, GUI_MSG_UPDATE_ITEM, 0, m_itemCurrentFile);
+			g_windowManager.SendMessage(msg);
+		  }
+		}
+	  }
+	  else if(IsPlayingVideo())
+	  {
+		const CVideoInfoTag *videotag = g_infoManager.GetCurrentMovieTag();
+
+		if (videotag)
+		{
+		  *m_itemCurrentFile->GetVideoInfoTag() = *videotag;
+
+		  if(action.GetID() == ACTION_DECREASE_RATING || action.GetID() == ACTION_INCREASE_RATING)
+		  {
+			  CVideoDatabase db;
+			  if (db.Open() == true)      // OpenForWrite() ?
+			  {
+				  float ratingOffset = (action.GetID() == ACTION_DECREASE_RATING) ? -1.0f : +1.0f;
+				  bool isModified = db.OnMovieUserRatingAction(*m_itemCurrentFile, ratingOffset);
+				  db.Close();
+
+				  if(isModified == true)
+				  {
+					  // send a message to all windows to tell them to update the fileitem (eg playlistplayer, media windows)
+					  CGUIMessage msg(GUI_MSG_NOTIFY_ALL, 0, 0, GUI_MSG_UPDATE_ITEM, 0, m_itemCurrentFile);
+					  g_windowManager.SendMessage(msg);
+				  }
+			  }
+		  }
+		}
+	  }
+
+	  return true;
   }
 
   // stop : stops playing current audio song
@@ -2606,7 +2629,6 @@ bool CApplication::OnAction(const CAction &action)
     if (m_playerController->OnAction(action))
       return true;
   }
-
 
   if (action.GetID() == ACTION_SWITCH_PLAYER)
   {
@@ -3266,7 +3288,7 @@ bool CApplication::Cleanup()
 #ifdef HAS_DVD_DRIVE
     CLibcdio::ReleaseInstance();
 #endif
-#endif 
+#endif
 #if defined(TARGET_ANDROID)
     // enable for all platforms once it's safe
     g_sectionLoader.UnloadAll();
@@ -3456,7 +3478,6 @@ bool CApplication::PlayMedia(const CFileItem& item, int iPlaylist)
 
     if (gotPlayList)
     {
-
       if (iPlaylist != PLAYLIST_NONE)
       {
         int track=0;
@@ -3555,7 +3576,6 @@ PlayBackRet CApplication::PlayStack(const CFileItem& item, bool bRestart)
       haveTimes = dbs.GetStackTimes(item.GetPath(), times);
       dbs.Close();
     }
-
 
     // calculate the total time of the stack
     CStackDirectory dir;
@@ -3706,7 +3726,6 @@ PlayBackRet CApplication::PlayFile(const CFileItem& item, bool bRestart)
     CFileItem item_new;
     if(g_tuxbox.CreateNewItem(item, item_new))
     {
-
       // Make sure it doesn't have a player
       // so we actually select one normally
       m_eCurrentPlayer = EPC_NONE;
@@ -3839,7 +3858,7 @@ PlayBackRet CApplication::PlayFile(const CFileItem& item, bool bRestart)
     CSingleLock lock(m_playStateMutex);
     // tell system we are starting a file
     m_bPlaybackStarting = true;
-    
+
     // for playing a new item, previous playing item's callback may already
     // pushed some delay message into the threadmessage list, they are not
     // expected be processed after or during the new item playback starting.
@@ -3867,7 +3886,7 @@ PlayBackRet CApplication::PlayFile(const CFileItem& item, bool bRestart)
     if ( !(m_eCurrentPlayer == eNewCore && (m_eCurrentPlayer == EPC_DVDPLAYER || m_eCurrentPlayer  == EPC_PAPLAYER
 #if defined(HAS_OMXPLAYER)
             || m_eCurrentPlayer == EPC_OMXPLAYER
-#endif            
+#endif
             )) )
     {
       ++m_iPlayerOPSeq;
@@ -3968,7 +3987,6 @@ PlayBackRet CApplication::PlayFile(const CFileItem& item, bool bRestart)
       if (g_windowManager.GetActiveWindow() == WINDOW_VISUALISATION
       ||  g_windowManager.GetActiveWindow() == WINDOW_FULLSCREEN_VIDEO)
         g_windowManager.PreviousWindow();
-
     }
 
 #if !defined(TARGET_POSIX)
@@ -4655,7 +4673,7 @@ bool CApplication::OnMessage(CGUIMessage& message)
 
       // Update our infoManager with the new details etc.
       if (m_nextPlaylistItem >= 0)
-      { 
+      {
         // playing an item which is not in the list - player might be stopped already
         // so do nothing
         if (playList.size() <= m_nextPlaylistItem)
@@ -5224,7 +5242,7 @@ float CApplication::GetVolume(bool percentage /* = true */) const
     // converts the hardware volume to a percentage
     return m_volumeLevel * 100.0f;
   }
-  
+
   return m_volumeLevel;
 }
 

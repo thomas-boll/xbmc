@@ -703,7 +703,7 @@ void CFileItem::ToSortable(SortItem &sortable)
 
   if (HasMusicInfoTag())
     GetMusicInfoTag()->ToSortable(sortable);
-    
+
   if (HasVideoInfoTag())
   {
     GetVideoInfoTag()->ToSortable(sortable);
@@ -716,7 +716,7 @@ void CFileItem::ToSortable(SortItem &sortable)
         sortable[FieldNumberOfWatchedEpisodes] = GetProperty("unwatchedepisodes");
     }
   }
-    
+
   if (HasPictureInfoTag())
     GetPictureInfoTag()->ToSortable(sortable);
 
@@ -887,7 +887,6 @@ bool CFileItem::IsFileFolder(EFileFolderType types) const
   if(IsInternetStream())
     always_type = EFILEFOLDER_TYPE_ONCLICK;
 
-
   if(types & always_type)
   {
     if( IsSmartPlayList()
@@ -916,7 +915,6 @@ bool CFileItem::IsFileFolder(EFileFolderType types) const
 
   return false;
 }
-
 
 bool CFileItem::IsSmartPlayList() const
 {
@@ -1473,7 +1471,7 @@ void CFileItem::SetFromVideoInfoTag(const CVideoInfoTag &video)
     m_strPath = video.m_strFileNameAndPath;
     m_bIsFolder = false;
   }
-  
+
   *GetVideoInfoTag() = video;
   if (video.m_iSeason == 0)
     SetProperty("isspecial", "true");
@@ -1856,6 +1854,7 @@ void CFileItemList::Sort(SortDescription sortDescription)
       sortDescription.sortBy == SortBySortTitle ||
       sortDescription.sortBy == SortByDateAdded ||
       sortDescription.sortBy == SortByRating ||
+      sortDescription.sortBy == SortByUserRating ||
       sortDescription.sortBy == SortByYear ||
       sortDescription.sortBy == SortByPlaylistOrder ||
       sortDescription.sortBy == SortByLastPlayed ||
@@ -1949,7 +1948,6 @@ void CFileItemList::Archive(CArchive& ar)
 
     SetFastLookup(false);
     Clear();
-
 
     CFileItem::Archive(ar);
 
@@ -2268,7 +2266,7 @@ void CFileItemList::StackFolders()
       // 1. rars and zips may be on slow sources? is this supposed to be allowed?
       if( !item->IsRemote()
         || item->IsSmb()
-        || item->IsNfs() 
+        || item->IsNfs()
         || item->IsAfp()
         || URIUtils::IsInRAR(item->GetPath())
         || URIUtils::IsInZIP(item->GetPath())
@@ -3231,4 +3229,3 @@ int CFileItem::GetVideoContentType() const
     type = VIDEODB_CONTENT_MUSICVIDEOS;
   return type;
 }
-

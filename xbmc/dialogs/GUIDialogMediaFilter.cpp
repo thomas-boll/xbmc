@@ -59,6 +59,7 @@ using namespace std;
 static const CGUIDialogMediaFilter::Filter filterList[] = {
   { "movies",       FieldTitle,         556,    SettingInfo::EDIT,        CSmartPlaylistRule::OPERATOR_CONTAINS },
   { "movies",       FieldRating,        563,    SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
+  { "movies",       FieldUserRating,    565,    SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
   //{ "movies",       FieldTime,          180,    SettingInfo::TODO,        CSmartPlaylistRule::TODO },
   { "movies",       FieldInProgress,    575,    SettingInfo::CHECK,       CSmartPlaylistRule::OPERATOR_FALSE },
   { "movies",       FieldYear,          562,    SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
@@ -73,6 +74,7 @@ static const CGUIDialogMediaFilter::Filter filterList[] = {
   { "tvshows",      FieldTitle,         556,    SettingInfo::EDIT,        CSmartPlaylistRule::OPERATOR_CONTAINS },
   //{ "tvshows",      FieldTvShowStatus,  126,    SettingInfo::TODO,        CSmartPlaylistRule::TODO },
   { "tvshows",      FieldRating,        563,    SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
+  { "tvshows",      FieldUserRating,    565,    SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
   { "tvshows",      FieldInProgress,    575,    SettingInfo::CHECK,       CSmartPlaylistRule::OPERATOR_FALSE },
   { "tvshows",      FieldYear,          562,    SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
   { "tvshows",      FieldTag,           20459,  SettingInfo::BUTTON,      CSmartPlaylistRule::OPERATOR_EQUALS },
@@ -84,6 +86,7 @@ static const CGUIDialogMediaFilter::Filter filterList[] = {
 
   { "episodes",     FieldTitle,         556,    SettingInfo::EDIT,        CSmartPlaylistRule::OPERATOR_CONTAINS },
   { "episodes",     FieldRating,        563,    SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
+  { "episodes",     FieldUserRating,    565,    SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
   { "episodes",     FieldAirDate,       20416,  SettingInfo::RANGE,       CSmartPlaylistRule::OPERATOR_BETWEEN },
   { "episodes",     FieldInProgress,    575,    SettingInfo::CHECK,       CSmartPlaylistRule::OPERATOR_FALSE },
   { "episodes",     FieldActor,         20337,  SettingInfo::BUTTON,      CSmartPlaylistRule::OPERATOR_EQUALS },
@@ -160,7 +163,7 @@ bool CGUIDialogMediaFilter::OnMessage(CGUIMessage& message)
         for (map<uint32_t, Filter>::iterator filter = m_filters.begin(); filter != m_filters.end(); filter++)
         {
           filter->second.rule = NULL;
-          
+
           switch (filter->second.type)
           {
             case SettingInfo::STRING:
@@ -280,7 +283,7 @@ void CGUIDialogMediaFilter::CreateSettings()
           AddEdit(filter.field, filter.label, (CStdString *)filter.data);
         break;
       }
-      
+
       case SettingInfo::CHECK:
       {
         if (filter.rule == NULL)
@@ -362,7 +365,7 @@ void CGUIDialogMediaFilter::SetupPage()
   CGUIDialogSettings::SetupPage();
 
   // set the heading label based on the media type
-  uint32_t localizedMediaId = 0; 
+  uint32_t localizedMediaId = 0;
   if (m_mediaType == "movies")
     localizedMediaId = 20342;
   else if (m_mediaType == "tvshows")
@@ -428,10 +431,10 @@ void CGUIDialogMediaFilter::OnSettingChanged(SettingInfo &setting)
       }
       else
         remove = true;
-        
+
       break;
     }
-    
+
     case SettingInfo::CHECK:
     {
       int choice = *(int *)setting.data;
@@ -453,7 +456,7 @@ void CGUIDialogMediaFilter::OnSettingChanged(SettingInfo &setting)
     {
       CFileItemList items;
       OnBrowse(filter, items);
-      
+
       if (items.Size() > 0)
       {
         if (filter.rule == NULL)
@@ -689,7 +692,7 @@ void CGUIDialogMediaFilter::OnBrowse(const Filter &filter, CFileItemList &items,
     CDatabase::Filter dbfilter;
     dbfilter.where = tmpFilter.GetWhereClause(videodb, playlists);
 
-    VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_MOVIES;    
+    VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_MOVIES;
     if (m_mediaType == "tvshows")
       type = VIDEODB_CONTENT_TVSHOWS;
     else if (m_mediaType == "episodes")
@@ -729,7 +732,7 @@ void CGUIDialogMediaFilter::OnBrowse(const Filter &filter, CFileItemList &items,
     std::set<CStdString> playlists;
     CDatabase::Filter dbfilter;
     dbfilter.where = tmpFilter.GetWhereClause(musicdb, playlists);
-    
+
     if (filter.field == FieldGenre)
       musicdb.GetGenresNav(m_dbUrl->ToString(), selectItems, dbfilter, countOnly);
     else if (filter.field == FieldArtist)
@@ -797,7 +800,7 @@ void CGUIDialogMediaFilter::DeleteRule(Field field)
 
 void CGUIDialogMediaFilter::GetRange(const Filter &filter, float &min, float &interval, float &max, RANGEFORMATFUNCTION &formatFunction)
 {
-  if (filter.field == FieldRating)
+  if (filter.field == FieldRating || filter.field == FieldUserRating)
   {
     if (m_mediaType == "movies" || m_mediaType == "tvshows" || m_mediaType == "episodes")
     {
@@ -877,7 +880,7 @@ void CGUIDialogMediaFilter::GetRange(const Filter &filter, float &min, float &in
     if (m_mediaType == "episodes")
     {
       CStdString field; field.Format("CAST(strftime(\"%%s\", c%02d) AS INTEGER)", VIDEODB_ID_EPISODE_AIRED);
-      
+
       GetMinMax("episodeview", field, min, max);
       interval = 60 * 60 * 24 * 7; // 1 week
     }

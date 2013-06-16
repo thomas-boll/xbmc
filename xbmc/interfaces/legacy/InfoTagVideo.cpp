@@ -118,6 +118,11 @@ namespace XBMCAddon
       return infoTag->m_fRating;
     }
 
+    double InfoTagVideo::getUserRating()
+    {
+      return infoTag->m_fUserRating;
+    }
+
     int InfoTagVideo::getPlayCount()
     {
       return infoTag->m_playCount;

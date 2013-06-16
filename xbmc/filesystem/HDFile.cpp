@@ -111,7 +111,6 @@ bool CHDFile::Open(const CURL& url)
 
 bool CHDFile::Exists(const CURL& url)
 {
-  struct __stat64 buffer;
   CStdString strFile = GetLocal(url);
 
 #ifdef TARGET_WINDOWS
@@ -123,6 +122,7 @@ bool CHDFile::Exists(const CURL& url)
     return false;
   return true;
 #else
+  struct __stat64 buffer;
   return (_stat64(strFile.c_str(), &buffer)==0);
 #endif
 }

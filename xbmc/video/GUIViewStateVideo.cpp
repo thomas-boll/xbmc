@@ -204,6 +204,7 @@ CGUIViewStateWindowVideoNav::CGUIViewStateWindowVideoNav(const CFileItemList& it
 
         AddSortMethod(SORT_METHOD_YEAR, 562, LABEL_MASKS("%T", "%Y", "%T", "%Y"));  // Title, Year | Title, Year
         AddSortMethod(SORT_METHOD_VIDEO_RATING, 563, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
+        AddSortMethod(SORT_METHOD_VIDEO_USERRATING, 565, LABEL_MASKS("%T", "%r", "%T", "%r"));  // Title, UserRating | Title, UserRating
         AddSortMethod(SORT_METHOD_DATEADDED, 570, LABEL_MASKS("%T", "%a", "%T", "%a"));  // Title, DateAdded | Title, DateAdded
 
         if (CMediaSettings::Get().GetWatchedMode(items.GetContent()) == WatchedModeAll)
@@ -236,6 +237,7 @@ CGUIViewStateWindowVideoNav::CGUIViewStateWindowVideoNav(const CFileItemList& it
         {
           AddSortMethod(SORT_METHOD_EPISODE, 20359, LABEL_MASKS("%E. %T","%R"));  // Episode. Title, Rating | empty, empty
           AddSortMethod(SORT_METHOD_VIDEO_RATING, 563, LABEL_MASKS("%E. %T", "%R"));  // Episode. Title, Rating | empty, empty
+          AddSortMethod(SORT_METHOD_VIDEO_USERRATING, 565, LABEL_MASKS("%E. %T", "%r"));  // Episode. Title, UserRating | empty, empty
           AddSortMethod(SORT_METHOD_MPAA_RATING, 20074, LABEL_MASKS("%E. %T", "%O"));  // Episode. Title, MPAA | empty, empty
           AddSortMethod(SORT_METHOD_PRODUCTIONCODE, 20368, LABEL_MASKS("%E. %T","%P", "%E. %T","%P"));  // Episode. Title, ProductionCode | Episode. Title, ProductionCode
           AddSortMethod(SORT_METHOD_DATE, 552, LABEL_MASKS("%E. %T","%J","%E. %T","%J"));  // Episode. Title, Date | Episode. Title, Date
@@ -247,6 +249,7 @@ CGUIViewStateWindowVideoNav::CGUIViewStateWindowVideoNav(const CFileItemList& it
         {
           AddSortMethod(SORT_METHOD_EPISODE, 20359, LABEL_MASKS("%H. %T","%R"));  // Order. Title, Rating | emtpy, empty
           AddSortMethod(SORT_METHOD_VIDEO_RATING, 563, LABEL_MASKS("%H. %T", "%R"));  // Order. Title, Rating | emtpy, empty
+          AddSortMethod(SORT_METHOD_VIDEO_USERRATING, 565, LABEL_MASKS("%H. %T", "%r"));  // Order. Title, UserRating | emtpy, empty
           AddSortMethod(SORT_METHOD_MPAA_RATING, 20074, LABEL_MASKS("%H. %T", "%O"));  // Order. Title, MPAA | emtpy, empty
           AddSortMethod(SORT_METHOD_PRODUCTIONCODE, 20368, LABEL_MASKS("%H. %T","%P", "%H. %T","%P"));  // Order. Title, ProductionCode | Episode. Title, ProductionCode
           AddSortMethod(SORT_METHOD_DATE, 552, LABEL_MASKS("%H. %T","%J","%H. %T","%J"));  // Order. Title, Date | Episode. Title, Date
@@ -296,6 +299,7 @@ CGUIViewStateWindowVideoNav::CGUIViewStateWindowVideoNav(const CFileItemList& it
           AddSortMethod(SORT_METHOD_YEAR, 562, LABEL_MASKS("%T", "%Y", "%T", "%Y"));  // Title, Year | Title, Year
         }
         AddSortMethod(SORT_METHOD_VIDEO_RATING, 563, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
+        AddSortMethod(SORT_METHOD_VIDEO_USERRATING, 565, LABEL_MASKS("%T", "%r", "%T", "%r"));  // Title, Rating | Title, Rating
         AddSortMethod(SORT_METHOD_MPAA_RATING, 20074, LABEL_MASKS("%T", "%O"));  // Title, MPAA | empty, empty
         AddSortMethod(SORT_METHOD_VIDEO_RUNTIME, 180, LABEL_MASKS("%T", "%D"));  // Title, Duration | empty, empty
         AddSortMethod(SORT_METHOD_DATEADDED, 570, LABEL_MASKS("%T", "%a", "%T", "%a"));  // Title, DateAdded | Title, DateAdded
@@ -503,7 +507,6 @@ VECSOURCES& CGUIViewStateWindowVideoPlaylist::GetSources()
   return m_sources;
 }
 
-
 CGUIViewStateVideoMovies::CGUIViewStateVideoMovies(const CFileItemList& items) : CGUIViewStateWindowVideo(items)
 {
   if (CSettings::Get().GetBool("filelists.ignorethewhensorting"))
@@ -511,6 +514,7 @@ CGUIViewStateVideoMovies::CGUIViewStateVideoMovies(const CFileItemList& items) :
   else
     AddSortMethod(SORT_METHOD_VIDEO_SORT_TITLE, 556, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
   AddSortMethod(SORT_METHOD_VIDEO_RATING, 563, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
+  AddSortMethod(SORT_METHOD_VIDEO_USERRATING, 565, LABEL_MASKS("%T", "%r", "%T", "%r"));  // Title, UserRating | Title, UserRating
   AddSortMethod(SORT_METHOD_MPAA_RATING, 20074, LABEL_MASKS("%T", "%O"));  // Title, MPAA | empty, empty
   AddSortMethod(SORT_METHOD_YEAR, 562, LABEL_MASKS("%T", "%Y", "%T", "%Y"));  // Title, Year | Title, Year
 
@@ -532,7 +536,6 @@ void CGUIViewStateVideoMovies::SaveViewState()
 {
   SaveViewToDb(m_items.GetPath(), WINDOW_VIDEO_NAV, CViewStateSettings::Get().Get("videonavtitles"));
 }
-
 
 CGUIViewStateVideoMusicVideos::CGUIViewStateVideoMusicVideos(const CFileItemList& items) : CGUIViewStateWindowVideo(items)
 {
@@ -605,7 +608,6 @@ void CGUIViewStateVideoTVShows::SaveViewState()
   SaveViewToDb(m_items.GetPath(), WINDOW_VIDEO_NAV, CViewStateSettings::Get().Get("videonavtvshows"));
 }
 
-
 CGUIViewStateVideoEpisodes::CGUIViewStateVideoEpisodes(const CFileItemList& items) : CGUIViewStateWindowVideo(items)
 {
   if (CSettings::Get().GetBool("filelists.ignorethewhensorting"))
@@ -615,6 +617,7 @@ CGUIViewStateVideoEpisodes::CGUIViewStateVideoEpisodes(const CFileItemList& item
   if (0)//params.GetSeason() > -1)
   {
     AddSortMethod(SORT_METHOD_VIDEO_RATING, 563, LABEL_MASKS("%E. %T", "%R"));  // Episode. Title, Rating | empty, empty
+    AddSortMethod(SORT_METHOD_VIDEO_USERRATING, 565, LABEL_MASKS("%E. %T", "%r"));  // Episode. Title, Rating | empty, empty
     AddSortMethod(SORT_METHOD_MPAA_RATING, 20074, LABEL_MASKS("%E. %T", "%O"));  // Episode. Title, MPAA | empty, empty
     AddSortMethod(SORT_METHOD_EPISODE, 20359, LABEL_MASKS("%E. %T","%R"));  // Episode. Title, Rating | empty, empty
     AddSortMethod(SORT_METHOD_PRODUCTIONCODE, 20368, LABEL_MASKS("%E. %T","%P", "%E. %T","%P"));  // Episode. Title, Production Code | Episode. Title, Production Code
@@ -623,6 +626,7 @@ CGUIViewStateVideoEpisodes::CGUIViewStateVideoEpisodes(const CFileItemList& item
   else
   { // format here is tvshowtitle - season/episode number. episode title
     AddSortMethod(SORT_METHOD_VIDEO_RATING, 563, LABEL_MASKS("%Z - %H. %T", "%R"));  // TvShow - Order. Title, Rating | empty, empty
+    AddSortMethod(SORT_METHOD_VIDEO_USERRATING, 565, LABEL_MASKS("%Z - %H. %T", "%r"));  // TvShow - Order. Title, Rating | empty, empty
     AddSortMethod(SORT_METHOD_MPAA_RATING, 20074, LABEL_MASKS("%Z - %H. %T", "%O"));  // TvShow - Order. Title, MPAA | empty, empty
     AddSortMethod(SORT_METHOD_EPISODE, 20359, LABEL_MASKS("%Z - %H. %T","%R"));  // TvShow - Order. Title, Rating | empty, empty
     AddSortMethod(SORT_METHOD_PRODUCTIONCODE, 20368, LABEL_MASKS("%Z - %H. %T","%P"));  // TvShow - Order. Title, Production Code | empty, empty
@@ -631,7 +635,7 @@ CGUIViewStateVideoEpisodes::CGUIViewStateVideoEpisodes(const CFileItemList& item
 
   const CViewState *viewState = CViewStateSettings::Get().Get("videonavepisodes");
   if (items.IsSmartPlayList() || items.GetProperty("library.filter").asBoolean())
-    AddPlaylistOrder(items, LABEL_MASKS("%Z - %H. %T", "%R"));  // TvShow - Order. Title, Rating | empty, empty
+    AddPlaylistOrder(items, LABEL_MASKS("%Z - %H. %T", "%R %r"));  // TvShow - Order. Title, Rating UserRating | empty, empty
   else
   {
     SetSortMethod(viewState->m_sortMethod);
@@ -647,4 +651,3 @@ void CGUIViewStateVideoEpisodes::SaveViewState()
 {
   SaveViewToDb(m_items.GetPath(), WINDOW_VIDEO_NAV, CViewStateSettings::Get().Get("videonavepisodes"));
 }
-

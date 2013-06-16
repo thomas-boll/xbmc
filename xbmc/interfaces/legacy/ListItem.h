@@ -49,7 +49,7 @@ namespace XBMCAddon
     public:
       CFileItemPtr item;
 
-      ListItem(const String& label = emptyString, 
+      ListItem(const String& label = emptyString,
                const String& label2 = emptyString,
                const String& iconImage = emptyString,
                const String& thumbnailImage = emptyString,
@@ -58,8 +58,8 @@ namespace XBMCAddon
 #ifndef SWIG
       inline ListItem(CFileItemPtr pitem) : AddonClass("ListItem"), item(pitem) {}
 
-      static inline AddonClass::Ref<ListItem> fromString(const String& str) 
-      { 
+      static inline AddonClass::Ref<ListItem> fromString(const String& str)
+      {
         AddonClass::Ref<ListItem> ret = AddonClass::Ref<ListItem>(new ListItem());
         ret->item.reset(new CFileItem(str));
         return ret;
@@ -70,7 +70,7 @@ namespace XBMCAddon
 
       /**
        * getLabel() -- Returns the listitem label.
-       * 
+       *
        * example:
        *   - label = self.list.getSelectedItem().getLabel()
        */
@@ -78,7 +78,7 @@ namespace XBMCAddon
 
       /**
        * getLabel2() -- Returns the listitem label.
-       * 
+       *
        * example:
        *   - label = self.list.getSelectedItem().getLabel2()
        */
@@ -86,9 +86,9 @@ namespace XBMCAddon
 
       /**
        * setLabel(label) -- Sets the listitem's label.
-       * 
+       *
        * label          : string or unicode - text string.
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().setLabel('Casino Royale')
        */
@@ -96,9 +96,9 @@ namespace XBMCAddon
 
       /**
        * setLabel2(label) -- Sets the listitem's label2.
-       * 
+       *
        * label          : string or unicode - text string.
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().setLabel2('Casino Royale')
        */
@@ -106,9 +106,9 @@ namespace XBMCAddon
 
       /**
        * setIconImage(icon) -- Sets the listitem's icon image.
-       * 
+       *
        * icon            : string - image filename.
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().setIconImage('emailread.png')
        */
@@ -116,9 +116,9 @@ namespace XBMCAddon
 
       /**
        * setThumbnailImage(thumbFilename) -- Sets the listitem's thumbnail image.
-       * 
+       *
        * thumb           : string - image filename.
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().setThumbnailImage('emailread.png')
        */
@@ -126,9 +126,9 @@ namespace XBMCAddon
 
       /**
        * select(selected) -- Sets the listitem's selected status.
-       * 
+       *
        * selected        : bool - True=selected/False=not selected
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().select(True)
        */
@@ -136,7 +136,7 @@ namespace XBMCAddon
 
       /**
        * isSelected() -- Returns the listitem's selected status.
-       * 
+       *
        * example:
        *   - is = self.list.getSelectedItem().isSelected()
        */
@@ -144,22 +144,22 @@ namespace XBMCAddon
 
       /**
        * setInfo(type, infoLabels) -- Sets the listitem's infoLabels.
-       * 
+       *
        * type              : string - type of media(video/music/pictures).
        * infoLabels        : dictionary - pairs of { label: value }.
-       * 
+       *
        * *Note, To set pictures exif info, prepend 'exif:' to the label. Exif values must be passed
        *        as strings, separate value pairs with a comma. (eg. {'exif:resolution': '720,480'}
        *        See CPictureInfoTag::TranslateString in PictureInfoTag.cpp for valid strings.
-       * 
+       *
        *        You can use the above as keywords for arguments and skip certain optional arguments.
        *        Once you use a keyword, all following arguments require the keyword.
-       * 
+       *
        * General Values that apply to all types:
        *     count         : integer (12) - can be used to store an id for later, or for sorting purposes
        *     size          : long (1024) - size in bytes
        *     date          : string (%d.%m.%Y / 01.01.2009) - file date
-       * 
+       *
        * Video Values:
        *     genre         : string (Comedy)
        *     year          : integer (2009)
@@ -168,6 +168,7 @@ namespace XBMCAddon
        *     top250        : integer (192)
        *     tracknumber   : integer (3)
        *     rating        : float (6.4) - range is 0..10
+       *     userrating    : float (6.4) - range is 0..10
        *     watched       : depreciated - use playcount instead
        *     playcount     : integer (2) - number of times this item has been played
        *     overlay       : integer (2) - range is 0..8.  See GUIListItem.h for values
@@ -196,7 +197,7 @@ namespace XBMCAddon
        *     votes         : string (12345 votes)
        *     trailer       : string (/home/user/trailer.avi)
        *     dateadded     : string (%Y-%m-%d %h:%m:%s = 2009-04-05 23:16:04)
-       * 
+       *
        * Music Values:
        *     tracknumber   : integer (8)
        *     duration      : integer (245) - duration in seconds
@@ -209,12 +210,12 @@ namespace XBMCAddon
        *     lyrics        : string (On a dark desert highway...)
        *     playcount     : integer (2) - number of times this item has been played
        *     lastplayed    : string (%Y-%m-%d %h:%m:%s = 2009-04-05 23:16:04)
-       * 
+       *
        * Picture Values:
        *     title         : string (In the last summer-1)
        *     picturepath   : string (/home/username/pictures/img001.jpg)
        *     exif*         : string (See CPictureInfoTag::TranslateString in PictureInfoTag.cpp for valid strings)
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().setInfo('video', { 'Genre': 'Comedy' })\n
        */
@@ -222,25 +223,25 @@ namespace XBMCAddon
 
       /**
        * addStreamInfo(type, values) -- Add a stream with details.
-       * 
+       *
        * type              : string - type of stream(video/audio/subtitle).
        * values            : dictionary - pairs of { label: value }.
-       * 
+       *
        * Video Values:
        *     codec         : string (h264)
        *     aspect        : float (1.78)
        *     width         : integer (1280)
        *     height        : integer (720)
        *     duration      : integer (seconds)
-       * 
+       *
        * Audio Values:
        *     codec         : string (dts)
        *     language      : string (en)
        *     channels      : integer (2)
-       * 
+       *
        * Subtitle Values:
        *     language      : string (en)
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().addStreamInfo('video', { 'Codec': 'h264', 'Width' : 1280 })
        */
@@ -248,17 +249,17 @@ namespace XBMCAddon
 
       /**
        * addContextMenuItems([(label, action,)*], replaceItems) -- Adds item(s) to the context menu for media lists.
-       * 
+       *
        * items               : list - [(label, action,)*] A list of tuples consisting of label and action pairs.
        *   - label           : string or unicode - item's label.
        *   - action          : string or unicode - any built-in function to perform.
        * replaceItems        : [opt] bool - True=only your items will show/False=your items will be added to context menu(Default).
-       * 
-       * List of functions - http://wiki.xbmc.org/?title=List_of_Built_In_Functions 
-       * 
+       *
+       * List of functions - http://wiki.xbmc.org/?title=List_of_Built_In_Functions
+       *
        * *Note, You can use the above as keywords for arguments and skip certain optional arguments.
        *        Once you use a keyword, all following arguments require the keyword.
-       * 
+       *
        * example:
        *   - listitem.addContextMenuItems([('Theater Showtimes', 'XBMC.RunScript(special://home/scripts/showtimes/default.py,Iron Man)',)])\n
        */
@@ -266,18 +267,18 @@ namespace XBMCAddon
 
       /**
        * setProperty(key, value) -- Sets a listitem property, similar to an infolabel.
-       * 
+       *
        * key            : string - property name.
        * value          : string or unicode - value of property.
-       * 
+       *
        * *Note, Key is NOT case sensitive.
        *        You can use the above as keywords for arguments and skip certain optional arguments.
        *        Once you use a keyword, all following arguments require the keyword.
-       * 
+       *
        *  Some of these are treated internally by XBMC, such as the 'StartOffset' property, which is
        *  the offset in seconds at which to start playback of an item.  Others may be used in the skin
        *  to add extra information, such as 'WatchedCount' for tvshow items
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().setProperty('AspectRatio', '1.85 : 1')
        *   - self.list.getSelectedItem().setProperty('StartOffset', '256.4')
@@ -286,13 +287,13 @@ namespace XBMCAddon
 
       /**
        * getProperty(key) -- Returns a listitem property as a string, similar to an infolabel.
-       * 
+       *
        * key            : string - property name.
-       * 
+       *
        * *Note, Key is NOT case sensitive.
        *        You can use the above as keywords for arguments and skip certain optional arguments.
        *        Once you use a keyword, all following arguments require the keyword.
-       * 
+       *
        * example:
        *   - AspectRatio = self.list.getSelectedItem().getProperty('AspectRatio')
        */
@@ -300,17 +301,17 @@ namespace XBMCAddon
 
       /**
        * addContextMenuItems([(label, action,)*], replaceItems) -- Adds item(s) to the context menu for media lists.
-       * 
+       *
        * items               : list - [(label, action,)*] A list of tuples consisting of label and action pairs.
        *   - label           : string or unicode - item's label.
        *   - action          : string or unicode - any built-in function to perform.
        * replaceItems        : [opt] bool - True=only your items will show/False=your items will be added to context menu(Default).
-       * 
-       * List of functions - http://wiki.xbmc.org/?title=List_of_Built_In_Functions 
-       * 
+       *
+       * List of functions - http://wiki.xbmc.org/?title=List_of_Built_In_Functions
+       *
        * *Note, You can use the above as keywords for arguments and skip certain optional arguments.
        *        Once you use a keyword, all following arguments require the keyword.
-       * 
+       *
        * example:
        *   - listitem.addContextMenuItems([('Theater Showtimes', 'XBMC.RunScript(special://home/scripts/showtimes/default.py,Iron Man)',)])
        */
@@ -318,11 +319,11 @@ namespace XBMCAddon
 
       /**
        * setPath(path) -- Sets the listitem's path.
-       * 
+       *
        * path           : string or unicode - path, activated when item is clicked.
-       * 
+       *
        * *Note, You can use the above as keywords for arguments.
-       * 
+       *
        * example:
        *   - self.list.getSelectedItem().setPath(path='ActivateWindow(Weather)')
        */
@@ -330,9 +331,9 @@ namespace XBMCAddon
 
       /**
        * setMimeType(mimetype) -- Sets the listitem's mimetype if known.
-       * 
+       *
        * mimetype           : string or unicode - mimetype.
-       * 
+       *
        * *If known prehand, this can avoid xbmc doing HEAD requests to http servers to figure out file type.
        */
       void setMimeType(const String& mimetype);
@@ -341,7 +342,7 @@ namespace XBMCAddon
        * getdescription() -- Returns the description of this PlayListItem.
        */
       String getdescription();
-      
+
       /**
        * getduration() -- Returns the duration of this PlayListItem
        */
@@ -351,12 +352,8 @@ namespace XBMCAddon
        * getfilename() -- Returns the filename of this PlayListItem.
        */
       String getfilename();
-
     };
 
     typedef std::vector<ListItem*> ListItemList;
-    
   }
 }
-
-

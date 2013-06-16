@@ -36,7 +36,7 @@ namespace XBMCAddon
 {
   namespace xbmcgui
   {
-    ListItem::ListItem(const String& label, 
+    ListItem::ListItem(const String& label,
                        const String& label2,
                        const String& iconImage,
                        const String& thumbnailImage,
@@ -138,7 +138,6 @@ namespace XBMCAddon
         item->Select(selected);
       }
     }
-
 
     bool ListItem::isSelected()
     {
@@ -271,6 +270,8 @@ namespace XBMCAddon
             item->m_iprogramCount = strtol(value.c_str(), NULL, 10);
           else if (key == "rating")
             item->GetVideoInfoTag()->m_fRating = (float)strtod(value.c_str(), NULL);
+          else if (key == "userrating")
+            item->GetVideoInfoTag()->m_fUserRating = (float)strtod(value.c_str(), NULL);
           else if (key == "size")
             item->m_dwSize = (int64_t)strtoll(value.c_str(), NULL, 10);
           else if (key == "watched") // backward compat - do we need it?
@@ -283,7 +284,7 @@ namespace XBMCAddon
             if (overlay >= 0 && overlay <= 8)
               item->SetOverlayImage((CGUIListItem::GUIIconOverlay)overlay);
           }
-// TODO: This is a dynamic type for the value where a list is expected as the 
+// TODO: This is a dynamic type for the value where a list is expected as the
 //   Dictionary value.
 //          else if (key == "cast" || key == "castandrole")
 //          {
@@ -341,7 +342,7 @@ namespace XBMCAddon
           else if (key == "duration")
             item->GetVideoInfoTag()->m_duration = CVideoInfoTag::GetDurationFromMinuteString(value);
           else if (key == "studio")
-            item->GetVideoInfoTag()->m_studio = StringUtils::Split(value, g_advancedSettings.m_videoItemSeparator);            
+            item->GetVideoInfoTag()->m_studio = StringUtils::Split(value, g_advancedSettings.m_videoItemSeparator);
           else if (key == "tagline")
             item->GetVideoInfoTag()->m_strTagLine = value;
           else if (key == "writer")

@@ -19,7 +19,6 @@
  *
  */
 
-
 #include <vector>
 #include "XBDateTime.h"
 #include "utils/ScraperUrl.h"
@@ -137,6 +136,7 @@ public:
   int m_iSpecialSortEpisode;
   int m_iTrack;
   float m_fRating;
+  float m_fUserRating;
   float m_fEpBookmark;
   int m_iBookmarkId;
   int m_iIdShow;

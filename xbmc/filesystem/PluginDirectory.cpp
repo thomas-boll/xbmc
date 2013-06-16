@@ -18,7 +18,6 @@
  *
  */
 
-
 #include "threads/SystemClock.h"
 #include "system.h"
 #include "PluginDirectory.h"
@@ -91,7 +90,7 @@ bool CPluginDirectory::StartScript(const CStdString& strPath, bool retrievingDir
 {
   CURL url(strPath);
 
-  if (!CAddonMgr::Get().GetAddon(url.GetHostName(), m_addon, ADDON_UNKNOWN) && 
+  if (!CAddonMgr::Get().GetAddon(url.GetHostName(), m_addon, ADDON_UNKNOWN) &&
       !CAddonInstaller::Get().PromptForInstall(url.GetHostName(), m_addon))
   {
     CLog::Log(LOGERROR, "Unable to find plugin %s", url.GetHostName().c_str());
@@ -274,7 +273,7 @@ void CPluginDirectory::AddSortMethod(int handle, SORT_METHOD sortMethod, const C
       {
         dir->m_listItems->AddSortMethod(SORT_METHOD_BITRATE, 623, LABEL_MASKS("%T", "%X"));
         break;
-      }             
+      }
     case SORT_METHOD_SIZE:
       {
         dir->m_listItems->AddSortMethod(SORT_METHOD_SIZE, 553, LABEL_MASKS("%T", "%I"));
@@ -298,6 +297,11 @@ void CPluginDirectory::AddSortMethod(int handle, SORT_METHOD sortMethod, const C
     case SORT_METHOD_VIDEO_RATING:
       {
         dir->m_listItems->AddSortMethod(SORT_METHOD_VIDEO_RATING, 563, LABEL_MASKS("%T", "%R"));
+        break;
+      }
+    case SORT_METHOD_VIDEO_USERRATING:
+      {
+        dir->m_listItems->AddSortMethod(SORT_METHOD_VIDEO_USERRATING, 565, LABEL_MASKS("%T", "%R"));
         break;
       }
     case SORT_METHOD_YEAR:
@@ -427,7 +431,7 @@ void CPluginDirectory::AddSortMethod(int handle, SORT_METHOD sortMethod, const C
         dir->m_listItems->AddSortMethod(SORT_METHOD_CHANNEL, 19029, LABEL_MASKS("%T", label2Mask));
         break;
       }
-   
+
     default:
       break;
   }
@@ -555,7 +559,7 @@ bool CPluginDirectory::WaitOnScriptResult(const CStdString &scriptPath, int scri
     }
     else // if the progressBar exists and we call StartModal or Progress we get the
          //  ProcessRenderLoop call anyway.
-      if (inMainAppThread) 
+      if (inMainAppThread)
         g_windowManager.ProcessRenderLoop();
 
     if (!cancelled && m_cancelled)

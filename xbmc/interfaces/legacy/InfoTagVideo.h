@@ -55,6 +55,7 @@ namespace XBMCAddon
       String getIMDBNumber();
       int getYear();
       double getRating();
+      double getUserRating();
 
       /**
        * getPlayCount() -- returns a integer.

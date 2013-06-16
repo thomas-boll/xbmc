@@ -186,6 +186,13 @@ std::string DatabaseUtils::GetField(Field field, MediaType mediaType, DatabaseQu
       else
         result.Format("movieview.c%02d", VIDEODB_ID_RATING);
     }
+    else if (field == FieldUserRating)
+    {
+      if (queryPart == DatabaseQueryPartOrderBy)
+        result.Format("CAST(movieview.c%02d as DECIMAL(5,3))", VIDEODB_ID_USERRATING);
+      else
+        result.Format("movieview.c%02d", VIDEODB_ID_USERRATING);
+    }
     else if (field == FieldWriter) result.Format("movieview.c%02d", VIDEODB_ID_CREDITS);
     else if (field == FieldYear) result.Format("movieview.c%02d", VIDEODB_ID_YEAR);
     else if (field == FieldSortTitle) result.Format("movieview.c%02d", VIDEODB_ID_SORTTITLE);
@@ -223,6 +230,7 @@ std::string DatabaseUtils::GetField(Field field, MediaType mediaType, DatabaseQu
     else if (field == FieldTvShowStatus) result.Format("tvshowview.c%02d", VIDEODB_ID_TV_STATUS);
     else if (field == FieldVotes) result.Format("tvshowview.c%02d", VIDEODB_ID_TV_VOTES);
     else if (field == FieldRating) result.Format("tvshowview.c%02d", VIDEODB_ID_TV_RATING);
+    else if (field == FieldUserRating) result.Format("tvshowview.c%02d", VIDEODB_ID_TV_USERRATING);
     else if (field == FieldYear) result.Format("tvshowview.c%02d", VIDEODB_ID_TV_PREMIERED);
     else if (field == FieldGenre) result.Format("tvshowview.c%02d", VIDEODB_ID_TV_GENRE);
     else if (field == FieldMPAA) result.Format("tvshowview.c%02d", VIDEODB_ID_TV_MPAA);
@@ -246,6 +254,7 @@ std::string DatabaseUtils::GetField(Field field, MediaType mediaType, DatabaseQu
     else if (field == FieldPlot) result.Format("episodeview.c%02d", VIDEODB_ID_EPISODE_PLOT);
     else if (field == FieldVotes) result.Format("episodeview.c%02d", VIDEODB_ID_EPISODE_VOTES);
     else if (field == FieldRating) result.Format("episodeview.c%02d", VIDEODB_ID_EPISODE_RATING);
+    else if (field == FieldUserRating) result.Format("episodeview.c%02d", VIDEODB_ID_EPISODE_USERRATING);
     else if (field == FieldWriter) result.Format("episodeview.c%02d", VIDEODB_ID_EPISODE_CREDITS);
     else if (field == FieldAirDate) result.Format("episodeview.c%02d", VIDEODB_ID_EPISODE_AIRED);
     else if (field == FieldTime) result.Format("episodeview.c%02d", VIDEODB_ID_EPISODE_RUNTIME);
@@ -367,6 +376,7 @@ int DatabaseUtils::GetFieldIndex(Field field, MediaType mediaType)
     else if (field == FieldTagline) index = VIDEODB_ID_TAGLINE;
     else if (field == FieldVotes) index = VIDEODB_ID_VOTES;
     else if (field == FieldRating) index = VIDEODB_ID_RATING;
+    else if (field == FieldUserRating) index = VIDEODB_ID_USERRATING;
     else if (field == FieldWriter) index = VIDEODB_ID_CREDITS;
     else if (field == FieldYear) index = VIDEODB_ID_YEAR;
     else if (field == FieldTime) index = VIDEODB_ID_RUNTIME;
@@ -400,6 +410,7 @@ int DatabaseUtils::GetFieldIndex(Field field, MediaType mediaType)
     else if (field == FieldTvShowStatus) index = VIDEODB_ID_TV_STATUS;
     else if (field == FieldVotes) index = VIDEODB_ID_TV_VOTES;
     else if (field == FieldRating) index = VIDEODB_ID_TV_RATING;
+    else if (field == FieldUserRating) index = VIDEODB_ID_TV_USERRATING;
     else if (field == FieldYear) index = VIDEODB_ID_TV_PREMIERED;
     else if (field == FieldGenre) index = VIDEODB_ID_TV_GENRE;
     else if (field == FieldMPAA) index = VIDEODB_ID_TV_MPAA;
@@ -425,6 +436,7 @@ int DatabaseUtils::GetFieldIndex(Field field, MediaType mediaType)
     else if (field == FieldPlot) index = VIDEODB_ID_EPISODE_PLOT;
     else if (field == FieldVotes) index = VIDEODB_ID_EPISODE_VOTES;
     else if (field == FieldRating) index = VIDEODB_ID_EPISODE_RATING;
+    else if (field == FieldUserRating) index = VIDEODB_ID_EPISODE_USERRATING;
     else if (field == FieldWriter) index = VIDEODB_ID_EPISODE_CREDITS;
     else if (field == FieldAirDate) index = VIDEODB_ID_EPISODE_AIRED;
     else if (field == FieldTime) index = VIDEODB_ID_EPISODE_RUNTIME;
@@ -615,7 +627,7 @@ bool DatabaseUtils::GetDatabaseResults(MediaType mediaType, const FieldList &fie
     case MediaTypeMusicVideo:
       result[FieldLabel] = result.at(FieldTitle).asString();
       break;
-      
+
     case MediaTypeEpisode:
     {
       std::ostringstream label;

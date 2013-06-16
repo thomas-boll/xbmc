@@ -97,6 +97,7 @@ using namespace MUSIC_INFO;
  *  %Z - tvshow title
  *  %a - Date Added
  *  %p - Last Played
+ *  %r - Movie user rating
  *  *t - Date Taken (suitable for Pictures)
  */
 
@@ -249,6 +250,10 @@ CStdString CLabelFormatter::GetMaskContent(const CMaskString &mask, const CFileI
     else if (movie && movie->m_fRating != 0.f)
       value.Format("%.1f", movie->m_fRating);
     break;
+  case 'r': // user rating
+    if (movie && movie->m_fUserRating != 0.f)
+      value.Format("%.1f", movie->m_fUserRating);
+    break;
   case 'C': // programs count
     value.Format("%i", item->m_iprogramCount);
     break;
@@ -335,7 +340,7 @@ void CLabelFormatter::SplitMask(unsigned int label, const CStdString &mask)
   while ((findStart = reg.RegFind(work.c_str())) >= 0)
   { // we've found a match
     m_staticContent[label].push_back(work.Left(findStart));
-    m_dynamicContent[label].push_back(CMaskString("", 
+    m_dynamicContent[label].push_back(CMaskString("",
           reg.GetReplaceString("\\1")[0], ""));
     work = work.Mid(findStart + reg.GetFindLen());
   }
@@ -421,4 +426,3 @@ void CLabelFormatter::FillMusicMaskContent(const char mask, const CStdString &va
     break;
   }
 }
-
